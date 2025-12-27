@@ -1,7 +1,9 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-import shutil, uuid
+from fastapi.responses import JSONResponse
 from gemini import detect_issue
+import os
+import uuid
 
 app = FastAPI()
 
@@ -12,29 +14,51 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 issues = []
 
+
 @app.post("/upload")
-async def upload_image(
+async def upload(
     file: UploadFile = File(...),
-    lat: float = 0,
-    lng: float = 0
+    lat: float = Form(...),
+    lng: float = Form(...),
+    description: str = Form("")
 ):
-    filename = f"uploads/{uuid.uuid4()}.jpg"
-    with open(filename, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    try:
+        image_bytes = await file.read()
 
-    issue = detect_issue(filename)
+        # Save image
+        filename = f"{UPLOAD_DIR}/{uuid.uuid4()}.jpg"
+        with open(filename, "wb") as f:
+            f.write(image_bytes)
 
-    issues.append({
-        "type": issue["label"],
-        "lat": lat,
-        "lng": lng,
-        "status": "Pending",
-        "image": filename
-    })
+        label = detect_issue(image_bytes)
 
-    return {"success": True, "issue": issue}
+        issue = {
+            "type": label,
+            "lat": lat,
+            "lng": lng,
+            "status": "Pending",
+            "image": filename,
+            "description": description,
+        }
+
+        issues.append(issue)
+
+        return {
+            "success": True,
+            "issue": issue
+        }
+
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)}
+        )
+
 
 @app.get("/issues")
 def get_issues():
