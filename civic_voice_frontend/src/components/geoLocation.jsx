@@ -1,49 +1,62 @@
 import { useState } from "react";
 
-function LocationInput() {
-  const [location, setLocation] = useState(null);
+function LocationInput({ setLat, setLng }) {
+  const [address, setAddress] = useState("");
   const [error, setError] = useState("");
-  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const getLocation = () => {
     if (!navigator.geolocation) {
-      setError("Geolocation is not supported by your browser");
+      setError("Geolocation not supported by your browser");
       return;
     }
 
+    setLoading(true);
+    setError("");
+
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
+      async (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        setLat(latitude);
+        setLng(longitude);
+
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await res.json();
+
+          setAddress(data.display_name || "Location found");
+        } catch (err) {
+          setAddress("Location detected (address unavailable)");
+        }
+
+        setLoading(false);
       },
       () => {
-        setError("Permission denied or unable to retrieve location");
+        setError("Permission denied or location unavailable");
+        setLoading(false);
       }
     );
-
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-        const { latitude, longitude } = pos.coords;
-
-        const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-        );
-
-        const data = await res.json();
-        setName(data.display_name);
-    });
   };
 
   return (
-    <div>
-      <button onClick={getLocation}>Location</button>
+    <div className="mb-3">
+      <button className="btn btn-outline-primary" onClick={getLocation}>
+        📍 Get Current Location
+      </button>
 
-      {location && (
-        <p>{name}</p>
+      {loading && <p className="text-muted mt-2">Fetching location...</p>}
+
+      {address && (
+        <p className="mt-2">
+          <strong>Location:</strong> {address}
+        </p>
       )}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="text-danger mt-2">{error}</p>}
     </div>
   );
 }
