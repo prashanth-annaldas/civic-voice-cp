@@ -15,3 +15,12 @@
   border: 0.1px solid black;
   height: 40px;
 }
+.admin {
+  min-height: 100vh;
+  background: url("https://images.unsplash.com/photo-1465447142348-e9952c393450");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  padding: 50px 0 70px;
+}
