@@ -11,6 +11,7 @@ from models import Issue, User
 from schemas import RegisterRequest
 from auth_utils import hash_password
 from auth_utils import verify_password
+from pydantic import BaseModel
 import os
 import uuid
 
@@ -32,6 +33,10 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 # Serve uploaded images
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+class RequestIn(BaseModel):
+    description: str
+    latitude: float
+    longitude: float
 
 def get_db():
     db = SessionLocal()
@@ -81,6 +86,30 @@ def login_user(data: RegisterRequest, db: Session = Depends(get_db)):
             "email": user.email
         }
     }
+
+@app.post("/requests")
+def create_request(data: RequestIn, db: Session = Depends(get_db)):
+    issue = Issue(
+        description=data.description,
+        lat=data.latitude,
+        lng=data.longitude,
+        status="Pending",
+        type="Manual"
+    )
+
+    db.add(issue)
+    db.commit()
+    db.refresh(issue)
+
+    send_issue_email({
+        "description": data.description,
+        "lat": data.latitude,
+        "lng": data.longitude,
+        "status": "Pending",
+        "type": "Manual"
+    })
+
+    return {"msg": "Request stored & email sent"}
 
 
 # ---------------- UPLOAD ISSUE ----------------
@@ -149,4 +178,17 @@ async def upload(
 # ---------------- GET ALL ISSUES ----------------
 @app.get("/issues")
 def get_issues(db: Session = Depends(get_db)):
-    return db.query(Issue).all()
+    issues = db.query(Issue).all()
+
+    return [
+        {
+            "id": issue.id,
+            "lat": issue.lat,
+            "lng": issue.lng,
+            "type": issue.type,
+            "status": issue.status,
+            "description": issue.description,
+            "image": issue.image,   # optional (for uploaded issues)
+        }
+        for issue in issues
+    ]
