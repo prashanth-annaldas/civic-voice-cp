@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 
 function NavBarHome() {
   return (
@@ -11,10 +11,10 @@ function NavBarHome() {
           <div className="col-md-6 d-flex justify-content-center">
             <ul className="nav nav-pills">
               {[
-                { name: "Home", path: "/" },
+                { name: "Home", path: "/home" },
                 { name: "Problems", path: "/problems" },
                 { name: "Requests", path: "/requests" },
-                { name: "Contact", path: "/contact" },
+                { name: "Admin", path: "/admin" },
                 { name: "About", path: "/about" },
               ].map((item) => (
                 <li className="nav-item" key={item.path}>
@@ -31,43 +31,40 @@ function NavBarHome() {
               ))}
             </ul>
           </div>
-
           <div className="col-md-3 d-flex justify-content-end">
             <div className="dropdown">
-              <a
-                href="#"
+              <Link
+                to="#"
                 className="d-flex align-items-center text-dark text-decoration-none dropdown-toggle"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
+                role="button"
               >
                 <img
                   src="https://github.com/mdo.png"
-                  alt=""
+                  alt="profile"
                   width="32"
                   height="32"
                   className="rounded-circle me-2"
                 />
-                <strong>mdo</strong>
-              </a>
+                <strong>Prashanth</strong>
+              </Link>
 
               <ul className="dropdown-menu dropdown-menu-end text-small">
                 <li>
-                  <a className="dropdown-item" href="#">
+                  <Link className="dropdown-item" to="/profile">
                     Profile
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Settings
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#">
-                    Sign out
-                  </a>
+                  <button className="dropdown-item">
+                    <Link className="dropdown-item" to="/login">
+                      Sign out
+                    </Link>
+                  </button>
                 </li>
               </ul>
             </div>
