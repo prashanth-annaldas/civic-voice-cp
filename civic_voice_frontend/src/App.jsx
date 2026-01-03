@@ -1,20 +1,21 @@
-import { useState } from 'react'
-import NavBar from './components/navBar';
-import NavBarHome from './components/navBarHome.jsx'
-import Register from './components/register';
-import Login from './components/login';
-import './App.css'
+import { Outlet, useLocation } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Outlet } from 'react-router-dom';
-import Location from './components/geoLocation.jsx';
+import './App.css';
+import NavBarHome from "./components/navBarHome";
+import NavBar from "./components/navBar";
 
 function App() {
+  const location = useLocation();
+  const showNav = location.pathname === "/";
+  const showNavHome = location.pathname === "/home" || location.pathname === "/problems" || location.pathname === "/requests" || location.pathname === "/admin" || location.pathname === "/about";
+
   return (
     <>
-    <Register />
-    <Outlet />
+      {showNav && <NavBar />}
+      {showNavHome && <NavBarHome />}
+      <Outlet />
     </>
-    );
+  );
 }
-//  navBarTab = {navBarTab} setNavBarTab = {setNavBarTab}
+
 export default App;
