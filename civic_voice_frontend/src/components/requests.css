@@ -1,0 +1,94 @@
+/* ================= REQUESTS PAGE ================= */
+.requests-page {
+  min-height: 100vh;
+  background: url("https://images.unsplash.com/photo-1465447142348-e9952c393450");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  padding: 50px 0 70px;
+}
+
+/* ---------- FORM CONTAINER ---------- */
+.requests-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- LABEL ---------- */
+.requests-card .form-label {
+  color: #084298;
+  font-weight: 600;
+}
+
+/* ---------- TEXTAREA ---------- */
+.requests-card textarea.form-control {
+  border-radius: 14px;
+  resize: none;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+}
+
+.requests-card textarea.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* ---------- SUBMIT BUTTON ---------- */
+.requests-card .btn-primary {
+  border-radius: 30px;
+  padding: 10px 28px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #0d6efd, #4dabf7);
+  border: none;
+  box-shadow: 0 8px 22px rgba(13, 110, 253, 0.35);
+  transition: all 0.3s ease;
+}
+
+.requests-card .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(13, 110, 253, 0.45);
+}
+
+/* ---------- SUCCESS ALERT ---------- */
+.requests-card .alert-success {
+  border-radius: 14px;
+  background: rgba(25, 135, 84, 0.12);
+  color: #0f5132;
+  border: none;
+  box-shadow: 0 6px 18px rgba(25, 135, 84, 0.2);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .requests-card {
+    padding: 25px;
+  }
+
+  .requests-card .btn-primary {
+    width: 100%;
+  }
+
+  .requests-page {
+    background-attachment: scroll;
+  }
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0.6;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation to card */
+.requests-card {
+  animation: slideUpFade 0.8s ease-out forwards;
+}
