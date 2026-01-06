@@ -12,7 +12,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="admin">
+    <div className="adminBG">
       <div className="container mt-4">
         <h4>Reported Problems</h4>
         <IssuesMap issues={issues} />

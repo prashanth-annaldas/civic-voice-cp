@@ -45,7 +45,7 @@ function Requests() {
   };
 
   return (
-    <div className="requests-page">
+    <div className="requests-page d-flex justify-content-center align-items-center vh-100">
       {/* page background */}
 
       <div className="container d-flex justify-content-center">

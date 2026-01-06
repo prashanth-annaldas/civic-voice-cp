@@ -43,14 +43,14 @@ function Register() {
   }
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
+    <div className="d-flex align-items-center justify-content-center vh-100 bg-light loginRegisterBG">
       <main
-        className="shadow rounded p-4 bg-white"
+        className="shadow rounded p-4 boxx"
         style={{ maxWidth: "400px", width: "100%" }}
       >
         <form onSubmit={handleRegister}>
           <center>
-            <h1 className="text-primary mb-3">Register</h1>
+            <h1 className="text-white mb-3">Register</h1>
           </center>
 
           <div className="form-floating mb-3">
@@ -92,7 +92,7 @@ function Register() {
           <button className="btn btn-primary w-100 py-2" type="submit">
             Register
           </button>
-          <p className="mt-3 mb-0 text-left">
+          <p className="mt-3 mb-0 text-left text-white">
             Already have an account? <Link to="/login">Login</Link>
           </p>
           {err && <div className="text-danger mt-2">{err}</div>}

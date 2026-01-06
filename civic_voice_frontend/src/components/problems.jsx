@@ -62,7 +62,7 @@ function Problems() {
   };
 
   return (
-    <div className="problems-page">
+    <div className="problems-page d-flex justify-content-center align-items-center vh-100">
       <div className="container d-flex justify-content-center">
         <div className="col-md-10 problems-card">
           <div className="row justify-content-center">

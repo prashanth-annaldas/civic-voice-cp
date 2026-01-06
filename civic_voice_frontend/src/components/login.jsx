@@ -37,14 +37,14 @@ function Login() {
   }
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
+    <div className="d-flex align-items-center justify-content-center vh-100 bg-light loginRegisterBG">
       <main
-        className="shadow rounded p-4 bg-white"
+        className="shadow rounded p-4 boxx"
         style={{ maxWidth: "400px", width: "100%" }}
       >
         <form onSubmit={handleLogin}>
           <center>
-            <h1 className="text-primary mb-3">Login</h1>
+            <h1 className="text-white mb-3">Login</h1>
           </center>
 
           <div className="form-floating mb-3">

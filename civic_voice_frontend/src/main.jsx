@@ -13,6 +13,7 @@ import Requests from './components/requests.jsx';
 import Admin from './components/admin.jsx';
 import About from './components/about.jsx';
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import Profile from './components/profile.jsx'
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: "admin", element: <Admin /> },
       { path: "about", element: <About /> },
       { path: "home", element: <Home /> },
+      { path: "profile", element: <Profile /> },
     ]
   }
 ]);

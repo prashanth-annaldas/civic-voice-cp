@@ -1,12 +1,13 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { NavLink, Link } from "react-router-dom";
+import Logo from '../assets/Logo.jpeg';
 
 function NavBarHome() {
   return (
     <div className="container-fluid px-4">
       <header className="navbar shadow-sm bg-white">
         <div className="row w-100 align-items-center">
-          <div className="col-md-3"></div>
+          <div className="col"><img className="logo" src={Logo} alt="logo" /></div>
 
           <div className="col-md-6 d-flex justify-content-center">
             <ul className="nav nav-pills">
@@ -61,7 +62,7 @@ function NavBarHome() {
                 </li>
                 <li>
                   <button className="dropdown-item">
-                    <Link className="dropdown-item" to="/login">
+                    <Link className="dropdown-item" to="/">
                       Sign out
                     </Link>
                   </button>

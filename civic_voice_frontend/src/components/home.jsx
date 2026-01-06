@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import IssuesMap from "./issueMap";
-import './home.css';
+import "./home.css";
 
 function Home() {
   const [issues, setIssues] = useState([]);
@@ -19,7 +19,8 @@ function Home() {
         <h1>Your Voice for a Better City</h1>
         <p>
           Report real civic issues like potholes, water leakage, and garbage
-          with location & image. Our AI detects the issue and alerts authorities.
+          with location & image. Our AI detects the issue and alerts
+          authorities.
         </p>
         <div className="d-flex justify-content-center gap-3 mt-3">
           <Link to="/requests" className="btn btn-primary">
@@ -32,34 +33,30 @@ function Home() {
       </section>
 
       <section className="stats-section">
-  <div className="container">
-    <div className="row text-center">
+        <div className="container">
+          <div className="row text-center">
+            {/* TOTAL PROBLEMS */}
+            <div className="col-md-4">
+              <h3>{issues.length}</h3>
+              <p>Problems Reported</p>
+            </div>
 
-      {/* TOTAL PROBLEMS */}
-      <div className="col-md-4">
-        <h3>{issues.length}</h3>
-        <p>Problems Reported</p>
-      </div>
+            {/* TOTAL REQUESTS */}
+            <div className="col-md-4">
+              <h3>
+                {issues.filter((issue) => issue.type === "Manual").length}
+              </h3>
+              <p>Requests Submitted</p>
+            </div>
 
-      {/* TOTAL REQUESTS */}
-      <div className="col-md-4">
-        <h3>
-          {issues.filter(issue => issue.type === "Manual").length}
-        </h3>
-        <p>Requests Submitted</p>
-      </div>
-
-      {/* AI DETECTION */}
-      <div className="col-md-4">
-        <h3>AI</h3>
-        <p>Gemini Detection</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
+            {/* AI DETECTION */}
+            <div className="col-md-4">
+              <h3>AI</h3>
+              <p>Gemini Detection</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="container my-5 text-center">
         <h2>How Civic Voice Works</h2>
@@ -87,7 +84,6 @@ function Home() {
           <IssuesMap issues={issues} />
         )}
       </section>
-
     </div>
   );
 }

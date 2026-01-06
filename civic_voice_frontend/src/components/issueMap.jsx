@@ -16,8 +16,8 @@ L.Icon.Default.mergeOptions({
 function IssuesMap({ issues }) {
   return (
     <MapContainer
-      center={[17.385, 78.486]}
-      zoom={13}
+      center={[17.5965, 78.4819]}
+      zoom={14}
       style={{ height: "450px", width: "100%" }}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
