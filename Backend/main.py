@@ -12,6 +12,7 @@ from schemas import RegisterRequest
 from auth_utils import hash_password
 from auth_utils import verify_password
 from pydantic import BaseModel
+from auth_utils import create_access_token
 import os
 import uuid
 
@@ -79,8 +80,13 @@ def login_user(data: RegisterRequest, db: Session = Depends(get_db)):
     if not verify_password(data.password, user.password):
         raise HTTPException(status_code=400, detail="Invalid password")
 
+    access_token = create_access_token(
+        data={"sub": str(user.id)}
+    )
+
     return {
-        "message": "Login successful",
+        "access_token": access_token,
+        "token_type": "bearer",
         "user": {
             "id": user.id,
             "email": user.email
