@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import Logo from "../assets/Logo.jpeg";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./home.css";
 
@@ -9,7 +10,11 @@ function LandingPage() {
       <header className="navbar shadow-sm bg-white">
         <div className="row w-100 align-items-center">
 
-          <div className="col-md-3"></div>
+          <div className="col">
+            <a to="/home">
+              <img className="logo" src={Logo} alt="logo" />
+            </a>
+          </div>
 
           <div className="col-md-6 d-flex justify-content-center">
             <ul className="nav nav-pills">
