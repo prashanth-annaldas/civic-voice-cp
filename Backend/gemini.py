@@ -37,14 +37,14 @@ unknown
     text = (response.text or "").lower()
 
     if "pothole" in text:
-        return "pothole"
+        return "Pothole"
     elif "garbage" in text:
-        return "garbage"
+        return "Garbage"
     elif "water" in text:
-        return "water_leak"
+        return "Water Leak"
     elif "light" in text:
-        return "street_light"
+        return "Street Light"
     elif "electric_transformer" in text:
-        return "electric_transformer"
+        return "Electric Transformer"
     else:
         return "unknown"
