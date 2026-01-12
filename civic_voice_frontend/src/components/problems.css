@@ -1,0 +1,114 @@
+/* ================= PROBLEMS PAGE ================= */
+.problems-page {
+  min-height: 100vh;
+  background: url("https://th.bing.com/th/id/OIG4.21NpOOI8XGZodk4k04xI?pid=ImgGn");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  padding: 50px 0 70px;
+}
+
+/* ---------- GLASS CARD ---------- */
+.problems-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- IMAGE CARD ---------- */
+.problems-card .card {
+  border-radius: 16px;
+  overflow: hidden;
+  border: none;
+}
+
+.problems-card .card-img-top {
+  transition: transform 0.4s ease;
+}
+
+.problems-card .card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+/* ---------- IMAGE PLACEHOLDER ---------- */
+.problems-card .image-placeholder {
+  height: 220px;
+  background: linear-gradient(135deg,  #7c7d7e);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ---------- TEXTAREA ---------- */
+.problems-card textarea.form-control {
+  border-radius: 14px;
+  resize: none;
+  transition: all 0.3s ease;
+}
+
+.problems-card textarea.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* ---------- FILE INPUT ---------- */
+.problems-card input[type="file"] {
+  border-radius: 10px;
+}
+
+/* ---------- SUBMIT BUTTON ---------- */
+.problems-card .btn-primary {
+  border-radius: 30px;
+  padding: 10px 28px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #0d6efd, #4dabf7);
+  border: none;
+  box-shadow: 0 8px 22px rgba(13, 110, 253, 0.35);
+}
+
+.problems-card .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(13, 110, 253, 0.45);
+}
+
+/* ---------- RESULT ALERT ---------- */
+.problems-card .alert-info {
+  border-radius: 14px;
+  background: rgba(13, 110, 253, 0.1);
+  color: #084298;
+  border: none;
+  box-shadow: 0 6px 18px rgba(13, 110, 253, 0.2);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .problems-card {
+    padding: 25px;
+  }
+
+  .problems-card .btn-primary {
+    width: 100%;
+  }
+
+  .problems-page {
+    background-attachment: scroll;
+  }
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0.6;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation to card */
+.problems-card {
+  animation: slideUpFade 0.8s ease-out forwards;
+}

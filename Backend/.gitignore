@@ -1,0 +1,12 @@
+# Environment variables (secrets)
+.env
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Local database
+civicvoice.db
+
+# Uploaded images
+uploads/
