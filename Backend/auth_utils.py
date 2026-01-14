@@ -12,7 +12,10 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password[:72])
+    password_bytes = password.encode("utf-8")
+    if len(password_bytes) > 72:
+        raise ValueError("Password too long (max 72 bytes)")
+    return pwd_context.hash(password)
 
 def verify_password(password: str, hashed: str) -> bool:
     return pwd_context.verify(password[:72], hashed)
