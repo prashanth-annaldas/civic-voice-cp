@@ -1,6 +1,7 @@
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import jwt
+from fastapi import HTTPException
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -14,7 +15,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 def hash_password(password: str) -> str:
     password_bytes = password.encode("utf-8")
     if len(password_bytes) > 72:
-        raise ValueError("Password too long (max 72 bytes)")
+        raise HTTPException(
+            status_code=400,
+            detail="Password too long (max 72 bytes)"
+        )
     return pwd_context.hash(password)
 
 def verify_password(password: str, hashed: str) -> bool:
