@@ -52,25 +52,24 @@ def get_db():
 # ---------------- REGISTER USER ----------------
 @app.post("/register", status_code=201)
 def register_user(data: RegisterRequest, db: Session = Depends(get_db)):
-    hashed_password = hash_password(data.password)
-
-    user = User(
-        email=data.email,
-        password=hashed_password
-    )
-
     try:
+        hashed_password = hash_password(data.password)
+
+        user = User(email=data.email, password=hashed_password)
         db.add(user)
         db.commit()
         db.refresh(user)
+
+        return {"message": "User registered successfully"}
+
     except IntegrityError:
         db.rollback()
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    return {
-        "message": "User registered successfully",
-        "email": user.email
-    }
+    except Exception as e:
+        db.rollback()
+        print("REGISTER FAILED:", e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/login")
 def login_user(data: RegisterRequest, db: Session = Depends(get_db)):
