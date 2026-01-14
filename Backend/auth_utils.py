@@ -12,17 +12,30 @@ SECRET_KEY = "CHANGE_THIS_SECRET_KEY"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
+
 def hash_password(password: str) -> str:
     password_bytes = password.encode("utf-8")
+
+    # bcrypt hard limit
     if len(password_bytes) > 72:
         raise HTTPException(
             status_code=400,
             detail="Password too long (max 72 bytes)"
         )
+
     return pwd_context.hash(password)
 
+
 def verify_password(password: str, hashed: str) -> bool:
-    return pwd_context.verify(password[:72], hashed)
+    password_bytes = password.encode("utf-8")
+
+    if len(password_bytes) > 72:
+        # password too long → never matches
+        return False
+
+    return pwd_context.verify(password, hashed)
+
+
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
