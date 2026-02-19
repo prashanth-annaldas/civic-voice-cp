@@ -3,13 +3,11 @@ uvicorn
 sqlalchemy
 pydantic
 python-multipart
-passlib[bcrypt]
+passlib[argon2]
 python-jose
 email-validator
 python-dotenv
 requests
 pillow
-google-genai
-pydantic
 google-generativeai
 psycopg2-binary
