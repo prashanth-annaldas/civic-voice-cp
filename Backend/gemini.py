@@ -1,21 +1,23 @@
-from dotenv import load_dotenv
 import os
-from google import genai
-from PIL import Image
 import io
+from dotenv import load_dotenv
+from PIL import Image
+import google.generativeai as genai
 
 load_dotenv()
 
 API_KEY = os.getenv("GOOGLE_API_KEY")
 
+if API_KEY:
+    genai.configure(api_key=API_KEY)
+
 
 def detect_issue(image_bytes: bytes) -> str:
-    # If no API key, safely return unknown
     if not API_KEY:
         return "unknown"
 
     try:
-        client = genai.Client(api_key=API_KEY)
+        model = genai.GenerativeModel("gemini-1.5-flash")
 
         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
@@ -29,11 +31,7 @@ electric_transformer
 unknown
 """
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=[prompt, image]
-        )
-
+        response = model.generate_content([prompt, image])
         text = (response.text or "").lower()
 
         if "pothole" in text:
