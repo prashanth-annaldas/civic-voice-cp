@@ -18,6 +18,11 @@ from auth_utils import hash_password, verify_password, create_access_token
 # ---------------- APP INIT ----------------
 app = FastAPI()
 
+@app.get("/")
+def home():
+    return {"status": "CivicVoice Backend Running 🚀"}
+
+
 
 # ---------------- STARTUP EVENT ----------------
 @app.on_event("startup")
