@@ -4,50 +4,58 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from pydantic import BaseModel
+import os
+import uuid
+
 from gemini import detect_issue
 from email_service import send_issue_email
 from database import engine, SessionLocal, Base
 from models import Issue, User
 from schemas import RegisterRequest
-from auth_utils import hash_password
-from auth_utils import verify_password
-from pydantic import BaseModel
-from auth_utils import create_access_token
-import os
-import uuid
+from auth_utils import hash_password, verify_password, create_access_token
 
+# ---------------- APP INIT ----------------
 app = FastAPI()
 
-# Create DB tables
-Base.metadata.create_all(bind=engine)
 
+# ---------------- STARTUP EVENT ----------------
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
+
+
+# ---------------- CORS ----------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://civic-voice-cp.onrender.com",
-    ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-UPLOAD_DIR = "uploads"
+
+# ---------------- FILE UPLOAD SETUP ----------------
+UPLOAD_DIR = "/tmp/uploads"  # IMPORTANT for Render
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# Serve uploaded images
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
-class RequestIn(BaseModel):
-    description: str
-    latitude: float
-    longitude: float
 
+# ---------------- DATABASE DEPENDENCY ----------------
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+# ---------------- REQUEST MODEL ----------------
+class RequestIn(BaseModel):
+    description: str
+    latitude: float
+    longitude: float
 
 
 # ---------------- REGISTER USER ----------------
@@ -73,6 +81,8 @@ def register_user(data: RegisterRequest, db: Session = Depends(get_db)):
         "email": user.email
     }
 
+
+# ---------------- LOGIN USER ----------------
 @app.post("/login")
 def login_user(data: RegisterRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == data.email).first()
@@ -96,6 +106,8 @@ def login_user(data: RegisterRequest, db: Session = Depends(get_db)):
         }
     }
 
+
+# ---------------- CREATE MANUAL REQUEST ----------------
 @app.post("/requests")
 def create_request(data: RequestIn, db: Session = Depends(get_db)):
     issue = Issue(
@@ -110,13 +122,16 @@ def create_request(data: RequestIn, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(issue)
 
-    send_issue_email({
-        "description": data.description,
-        "lat": data.latitude,
-        "lng": data.longitude,
-        "status": "Pending",
-        "type": "Manual"
-    })
+    try:
+        send_issue_email({
+            "description": data.description,
+            "lat": data.latitude,
+            "lng": data.longitude,
+            "status": "Pending",
+            "type": "Manual"
+        })
+    except Exception as e:
+        print("Email failed:", e)
 
     return {"msg": "Request stored & email sent"}
 
@@ -134,6 +149,7 @@ async def upload(
         image_bytes = await file.read()
 
         filename = f"{UPLOAD_DIR}/{uuid.uuid4()}.jpg"
+
         with open(filename, "wb") as f:
             f.write(image_bytes)
 
@@ -152,7 +168,6 @@ async def upload(
         db.commit()
         db.refresh(issue)
 
-        # Email notification (safe)
         try:
             send_issue_email(
                 {
@@ -197,7 +212,7 @@ def get_issues(db: Session = Depends(get_db)):
             "type": issue.type,
             "status": issue.status,
             "description": issue.description,
-            "image": issue.image,   # optional (for uploaded issues)
+            "image": issue.image,
         }
         for issue in issues
     ]
