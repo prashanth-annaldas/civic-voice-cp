@@ -103,6 +103,7 @@ function Login() {
               className="form-control"
               value={pass}
               onChange={(e) => setPass(e.target.value)}
+              autoComplete="current-password"
             />
             <label>Password</label>
           </div>
