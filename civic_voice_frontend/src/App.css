@@ -1,17 +1,20 @@
 .navbar {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  position:fixed;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
 }
-.loginRegisterBG{
+
+.loginRegisterBG {
   background-image: url("https://www.bitsathy.ac.in/wp-content/uploads/ew-what-is-generative-ai-model-1.png");
-  background-size: 100%;
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
 }
-.boxx{
+
+.boxx {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(1px);
   -webkit-backdrop-filter: blur(12px);
@@ -19,24 +22,51 @@
   border-radius: 12px;
   color: #000;
 }
-.logo{
-  width:80px;
+
+.logo {
+  width: 80px;
   margin-left: 40px;
 }
-.problems{
+
+.problems {
   display: flex;
   flex-direction: column;
-  width: 50%;
-  margin-left: 25%;
-  padding: 90px;
+  width: 100%;
+  padding: 20px 15px;
 }
-.submitBtn{
-  margin-left: 50%;
+
+@media (min-width: 481px) {
+  .problems {
+    padding: 30px;
+  }
 }
-.result{
+
+@media (min-width: 769px) {
+  .problems {
+    width: 80%;
+    margin-left: 10%;
+    padding: 50px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .problems {
+    width: 60%;
+    margin-left: 20%;
+    padding: 90px;
+  }
+}
+
+.submitBtn {
+  align-self: center;
+  margin-top: 15px;
+}
+
+.result {
   border: 0.1px solid black;
   height: 40px;
 }
+
 .adminBG {
   min-height: 100vh;
   background-image: url("https://th.bing.com/th/id/OIG4.21NpOOI8XGZodk4k04xI?pid=ImgGn");
@@ -44,8 +74,9 @@
   background-position: center;
   background-attachment: fixed;
 
-  padding: 50px 0 70px;
+  padding: 90px 0 70px;
 }
-.landingPageBG{
+
+.landingPageBG {
   height: 100vh;
 }

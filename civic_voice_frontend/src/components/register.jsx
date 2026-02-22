@@ -52,7 +52,7 @@ function Register() {
 
   return (
     <div className="d-flex align-items-center justify-content-center vh-100 bg-light loginRegisterBG">
-      <main className="shadow rounded p-4 boxx" style={{ maxWidth: "400px", width: "100%" }}>
+      <main className="shadow rounded p-4 m-3 boxx" style={{ maxWidth: "400px", width: "100%" }}>
         <form onSubmit={handleRegister}>
           <center>
             <h1 className="text-white mb-3">Register</h1>

@@ -6,7 +6,7 @@
   background-position: center;
   background-attachment: fixed;
 
-  padding: 50px 0 70px;
+  padding: 90px 0 70px;
 }
 
 /* ---------- GLASS CARD ---------- */
@@ -36,7 +36,7 @@
 /* ---------- IMAGE PLACEHOLDER ---------- */
 .problems-card .image-placeholder {
   height: 220px;
-  background: linear-gradient(135deg,  #7c7d7e);
+  background: linear-gradient(135deg, #7c7d7e);
   color: #fff;
   font-weight: 600;
 }
@@ -83,9 +83,21 @@
 }
 
 /* ---------- RESPONSIVE ---------- */
-@media (max-width: 768px) {
+/* Small Laptops */
+@media (max-width: 1024px) {
   .problems-card {
     padding: 25px;
+  }
+
+  .problems-page {
+    padding: 90px 20px 60px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .problems-card {
+    padding: 20px;
   }
 
   .problems-card .btn-primary {
@@ -93,7 +105,19 @@
   }
 
   .problems-page {
+    padding: 80px 15px 50px;
     background-attachment: scroll;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .problems-card {
+    padding: 15px;
+  }
+
+  .problems-page {
+    padding: 80px 10px 40px;
   }
 }
 
@@ -102,6 +126,7 @@
     opacity: 0.6;
     transform: translateY(40px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

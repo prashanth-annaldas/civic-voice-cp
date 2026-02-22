@@ -6,7 +6,7 @@
   background-position: center;
   background-attachment: fixed;
 
-  padding: 50px 0 70px;
+  padding: 90px 0 70px;
 }
 
 /* ---------- FORM CONTAINER ---------- */
@@ -63,9 +63,21 @@
 }
 
 /* ---------- RESPONSIVE ---------- */
-@media (max-width: 768px) {
+/* Small Laptops */
+@media (max-width: 1024px) {
   .requests-card {
     padding: 25px;
+  }
+
+  .requests-page {
+    padding: 90px 20px 60px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .requests-card {
+    padding: 20px;
   }
 
   .requests-card .btn-primary {
@@ -73,7 +85,19 @@
   }
 
   .requests-page {
+    padding: 80px 15px 50px;
     background-attachment: scroll;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .requests-card {
+    padding: 15px;
+  }
+
+  .requests-page {
+    padding: 80px 10px 40px;
   }
 }
 
@@ -82,6 +106,7 @@
     opacity: 0.6;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
