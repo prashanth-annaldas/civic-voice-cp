@@ -4,7 +4,7 @@ import IssuesMap from "./issueMap";
 function Home() {
   const [issues, setIssues] = useState([]);
 
-  const API_BASE = "https://civic-voice-backend-c55n.onrender.com";
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     fetch(`${API_BASE}/issues`)

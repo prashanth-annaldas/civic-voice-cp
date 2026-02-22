@@ -22,7 +22,7 @@ function Problems() {
   };
 
   const handleSubmit = async () => {
-    const API_BASE = "https://civic-voice-backend-c55n.onrender.com";
+    const API_BASE = import.meta.env.VITE_API_URL;
     if (!file) {
       alert("Please upload an image");
       return;

@@ -9,7 +9,7 @@ function Requests() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
 
-  const API_BASE = "https://civic-voice-backend-c55n.onrender.com";
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async () => {
     if (!text) {

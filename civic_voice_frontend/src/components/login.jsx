@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "https://civic-voice-backend-c55n.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL;
 console.log("API_URL from env:", API_URL);
 
 function Login() {
