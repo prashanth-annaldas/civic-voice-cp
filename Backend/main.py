@@ -15,6 +15,9 @@ from models import Issue, User
 from schemas import RegisterRequest
 from auth_utils import hash_password, verify_password, create_access_token
 
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
 # ---------------- APP INIT ----------------
 app = FastAPI()
 
@@ -61,6 +64,10 @@ class RequestIn(BaseModel):
     description: str
     latitude: float
     longitude: float
+
+
+class GoogleTokenRequest(BaseModel):
+    token: str
 
 
 # ---------------- REGISTER USER ----------------
@@ -110,6 +117,54 @@ def login_user(data: RegisterRequest, db: Session = Depends(get_db)):
             "email": user.email
         }
     }
+
+
+# ---------------- GOOGLE LOGIN ----------------
+@app.post("/google-login")
+def google_login(data: GoogleTokenRequest, db: Session = Depends(get_db)):
+    try:
+        # Verify the Google token
+        idinfo = id_token.verify_oauth2_token(
+            data.token, requests.Request()
+            # If you want to strictly verify the client ID, pass it here:
+            # audience="YOUR_GOOGLE_CLIENT_ID_HERE" 
+        )
+
+        email = idinfo.get("email")
+        if not email:
+            raise HTTPException(status_code=400, detail="No email provided by Google")
+
+        # Check if user exists
+        user = db.query(User).filter(User.email == email).first()
+
+        if not user:
+            # Create a new user with a random unguessable password
+            random_password = str(uuid.uuid4())
+            hashed_password = hash_password(random_password)
+            user = User(
+                email=email,
+                password=hashed_password
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+
+        # Generate our own application token
+        access_token = create_access_token(
+            data={"sub": str(user.id)}
+        )
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": {
+                "id": user.id,
+                "email": user.email
+            }
+        }
+    except ValueError as e:
+        # Invalid token
+        raise HTTPException(status_code=400, detail=f"Invalid Google token: {str(e)}")
 
 
 # ---------------- CREATE MANUAL REQUEST ----------------

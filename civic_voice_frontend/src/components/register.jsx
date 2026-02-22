@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 
 /* ✅ ADD THIS HERE */
 const API_URL = import.meta.env.VITE_API_URL;
@@ -50,6 +51,36 @@ function Register() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const res = await fetch(`${API_URL}/google-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: credentialResponse.credential,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErr(data.detail || data.msg || "Google Registration failed");
+        return;
+      }
+
+      if (!data.access_token) {
+        setErr("Invalid server response");
+        return;
+      }
+
+      localStorage.setItem("token", data.access_token);
+      alert("Registration successful with Google");
+      navigate("/home");
+    } catch (error) {
+      setErr("Server Error during Google Registration");
+    }
+  };
+
   return (
     <div className="d-flex align-items-center justify-content-center vh-100 bg-light loginRegisterBG">
       <main className="shadow rounded p-4 m-3 boxx" style={{ maxWidth: "400px", width: "100%" }}>
@@ -92,11 +123,27 @@ function Register() {
             Register
           </button>
 
-          <p className="mt-3 mb-0 text-white">
+          <div className="d-flex align-items-center my-3">
+            <hr className="flex-grow-1 text-white m-0" />
+            <span className="mx-2 text-white">OR</span>
+            <hr className="flex-grow-1 text-white m-0" />
+          </div>
+
+          <div className="d-flex justify-content-center mb-3">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                setErr("Google Registration Failed");
+              }}
+              text="signup_with"
+            />
+          </div>
+
+          <p className="mt-3 mb-0 text-white text-center">
             Already have an account? <Link to="/login">Login</Link>
           </p>
 
-          {err && <div className="text-white mt-2">{err}</div>}
+          {err && <div className="text-white text-center mt-2">{err}</div>}
         </form>
       </main>
     </div>

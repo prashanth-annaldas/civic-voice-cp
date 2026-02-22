@@ -11,3 +11,4 @@ requests
 pillow
 google-generativeai
 psycopg2-binary
+google-auth
