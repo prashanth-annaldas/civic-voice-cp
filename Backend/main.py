@@ -1,4 +1,5 @@
-from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -13,7 +14,8 @@ from email_service import send_issue_email
 from database import engine, SessionLocal, Base
 from models import Issue, User
 from schemas import RegisterRequest
-from auth_utils import hash_password, verify_password, create_access_token
+from auth_utils import hash_password, verify_password, create_access_token, ALGORITHM, SECRET_KEY
+from jose import jwt, JWTError
 
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -59,6 +61,28 @@ def get_db():
         db.close()
 
 
+# ---------------- AUTH DEPENDENCY ----------------
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise credentials_exception
+    return user
+
+
 # ---------------- REQUEST MODEL ----------------
 class RequestIn(BaseModel):
     description: str
@@ -68,6 +92,10 @@ class RequestIn(BaseModel):
 
 class GoogleTokenRequest(BaseModel):
     token: str
+
+
+class UserUpdateModel(BaseModel):
+    name: str
 
 
 # ---------------- REGISTER USER ----------------
@@ -165,6 +193,31 @@ def google_login(data: GoogleTokenRequest, db: Session = Depends(get_db)):
     except ValueError as e:
         # Invalid token
         raise HTTPException(status_code=400, detail=f"Invalid Google token: {str(e)}")
+
+
+# ---------------- USER PROFILE ROUTE ----------------
+@app.get("/me")
+def get_me(current_user: User = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "email": current_user.email,
+        "name": current_user.name
+    }
+
+
+@app.put("/me")
+def update_me(data: UserUpdateModel, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    current_user.name = data.name
+    db.commit()
+    db.refresh(current_user)
+    return {
+        "message": "User name updated successfully",
+        "user": {
+            "id": current_user.id,
+            "email": current_user.email,
+            "name": current_user.name
+        }
+    }
 
 
 # ---------------- CREATE MANUAL REQUEST ----------------

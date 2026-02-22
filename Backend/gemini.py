@@ -19,7 +19,7 @@ def detect_issue(image_bytes: bytes) -> str:
     try:
         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.5-flash")
 
         prompt = """
 Return ONLY one label:
@@ -49,5 +49,6 @@ unknown
             return "unknown"
 
     except Exception as e:
-        print("Gemini error:", e)
+        import traceback
+        traceback.print_exc()
         return "unknown"

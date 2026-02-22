@@ -15,6 +15,7 @@ import Problems from "./components/problems.jsx";
 import Requests from "./components/requests.jsx";
 import Admin from "./components/admin.jsx";
 import About from "./components/about.jsx";
+import Account from "./components/account.jsx";
 
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
           { path: "requests", element: <Requests /> },
           { path: "admin", element: <Admin /> },
           { path: "about", element: <About /> },
+          { path: "account", element: <Account /> },
         ],
       },
     ],
