@@ -491,7 +491,7 @@ def get_city_mood(db: Session = Depends(get_db)):
         
     try:
         genai.configure(api_key=API_KEY)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.5-flash")
         
         prompt = f"""
         Analyze the following recent citizen complaints to determine the overall "City Mood Index" (0-100, where 100 is perfectly happy and 0 is extremely frustrated/angry).
@@ -601,7 +601,7 @@ def chatbot_parse(data: ChatbotRequest):
         
     try:
         genai.configure(api_key=API_KEY)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.5-flash")
         
         prompt = f"""
         You are a smart city assistant. Extract the following details from this citizen complaint:
