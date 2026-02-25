@@ -416,6 +416,98 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 
+# ---------------- RBAC DEPENDENCIES ----------------
+def require_admin(current_user: User = Depends(get_current_user)):
+    if current_user.role != "ADMIN":
+        raise HTTPException(status_code=403, detail="Forbidden: Admins only")
+    return current_user
+
+def require_staff(current_user: User = Depends(get_current_user)):
+    if current_user.role not in ["ADMIN", "STAFF"]:
+        raise HTTPException(status_code=403, detail="Forbidden: Staff/Admins only")
+    return current_user
+
+
+# ---------------- PROTECTED MOCK ROUTES ----------------
+@app.post("/admin/deleteStaff")
+def delete_staff(current_user: User = Depends(require_admin)):
+    return {"message": "Staff user deleted (mock success)"}
+
+
+# ---------------- STAFF DASHBOARD ROUTES ----------------
+from models import Request as DBRequest # Rename to avoid conflict with fastapi Request
+
+@app.get("/staff/items")
+def get_staff_items(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # Fetch all Issues
+    issues = db.query(Issue).order_by(Issue.created_at.desc()).all()
+    # Fetch all Requests
+    requests = db.query(DBRequest).order_by(DBRequest.id.desc()).all()
+    
+    combined = []
+    for iss in issues:
+        combined.append({
+            "id": iss.id,
+            "type": "issue",
+            "category": iss.type,
+            "status": iss.status,
+            "description": iss.description,
+            "image": iss.image,
+            "lat": iss.lat,
+            "lng": iss.lng,
+            "created_at": str(iss.created_at)
+        })
+        
+    for req in requests:
+        combined.append({
+            "id": req.id,
+            "type": "request",
+            "category": "User Request",
+            "status": getattr(req, "status", "Pending"), # Ensure backward compat if schema lacks status
+            "description": req.description,
+            "image": None,
+            "lat": req.latitude,
+            "lng": req.longitude,
+            "created_at": None
+        })
+        
+    return combined
+
+class StatusUpdateModel(BaseModel):
+    status: str
+
+@app.put("/staff/items/{item_type}/{item_id}/status")
+def update_item_status(item_type: str, item_id: int, data: StatusUpdateModel, db: Session = Depends(get_db), current_user: User = Depends(require_staff)):
+    if data.status not in ["Pending", "Processing", "Resolved"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+        
+    if item_type == "issue":
+        item = db.query(Issue).filter(Issue.id == item_id).first()
+        if not item:
+            raise HTTPException(status_code=404, detail="Issue not found")
+        item.status = data.status
+        db.commit()
+        return {"message": "Issue status updated"}
+        
+    elif item_type == "request":
+        item = db.query(DBRequest).filter(DBRequest.id == item_id).first()
+        if not item:
+            raise HTTPException(status_code=404, detail="Request not found")
+            
+        # Requests might need a dynamic status check depending on migration
+        try:
+            item.status = data.status
+            db.commit()
+        except Exception:
+            # Fallback if request table was missing status
+            db.rollback()
+            return {"message": "Request table missing status column"}
+            
+        return {"message": "Request status updated"}
+        
+    raise HTTPException(status_code=400, detail="Invalid item type")
+
+
 # ---------------- REQUEST MODEL ----------------
 class RequestIn(BaseModel):
     description: str
@@ -438,7 +530,8 @@ def register_user(data: RegisterRequest, db: Session = Depends(get_db)):
 
     user = User(
         email=data.email,
-        password=hashed_password
+        password=hashed_password,
+        role=data.role
     )
 
     try:
@@ -451,7 +544,8 @@ def register_user(data: RegisterRequest, db: Session = Depends(get_db)):
 
     return {
         "message": "User registered successfully",
-        "email": user.email
+        "email": user.email,
+        "role": user.role
     }
 
 
@@ -475,7 +569,8 @@ def login_user(data: RegisterRequest, db: Session = Depends(get_db)):
         "token_type": "bearer",
         "user": {
             "id": user.id,
-            "email": user.email
+            "email": user.email,
+            "role": user.role
         }
     }
 
@@ -520,7 +615,8 @@ def google_login(data: GoogleTokenRequest, db: Session = Depends(get_db)):
             "token_type": "bearer",
             "user": {
                 "id": user.id,
-                "email": user.email
+                "email": user.email,
+                "role": user.role
             }
         }
     except ValueError as e:
@@ -535,6 +631,7 @@ def get_me(current_user: User = Depends(get_current_user)):
         "id": current_user.id,
         "email": current_user.email,
         "name": current_user.name,
+        "role": current_user.role,
         "points": current_user.points,
         "trust_score": current_user.trust_score,
         "badges": current_user.badges.split(",") if current_user.badges else []
@@ -551,7 +648,8 @@ def update_me(data: UserUpdateModel, current_user: User = Depends(get_current_us
         "user": {
             "id": current_user.id,
             "email": current_user.email,
-            "name": current_user.name
+            "name": current_user.name,
+            "role": current_user.role
         }
     }
 

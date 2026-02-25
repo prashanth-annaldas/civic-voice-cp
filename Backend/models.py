@@ -11,6 +11,7 @@ class User(Base):
     name = Column(String, nullable=True)
     
     # Advanced Platform Fields
+    role = Column(String, default="USER")
     points = Column(Integer, default=0)
     trust_score = Column(Float, default=100.0)
     badges = Column(String, default="")  # Stored as comma-separated string e.g. "Civic Champion"

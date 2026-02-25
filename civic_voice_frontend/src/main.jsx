@@ -6,6 +6,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import App from "./App.jsx";
 import AuthLayout from "./components/AuthLayout.jsx";
 import HomeLayout from "./components/HomeLayout.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 import LandingPage from "./components/LandingPage.jsx";
 import Login from "./components/login.jsx";
@@ -14,6 +15,7 @@ import Home from "./components/home.jsx";
 import Problems from "./components/problems.jsx";
 import Requests from "./components/requests.jsx";
 import Admin from "./components/admin.jsx";
+import StaffDashboard from "./components/StaffDashboard.jsx";
 import About from "./components/about.jsx";
 import Account from "./components/account.jsx";
 
@@ -38,12 +40,13 @@ const router = createBrowserRouter([
       {
         element: <HomeLayout />,
         children: [
-          { path: "home", element: <Home /> },
-          { path: "problems", element: <Problems /> },
-          { path: "requests", element: <Requests /> },
-          { path: "admin", element: <Admin /> },
-          { path: "about", element: <About /> },
-          { path: "account", element: <Account /> },
+          { path: "home", element: <ProtectedRoute><Home /></ProtectedRoute> },
+          { path: "problems", element: <ProtectedRoute><Problems /></ProtectedRoute> },
+          { path: "requests", element: <ProtectedRoute><Requests /></ProtectedRoute> },
+          { path: "admin", element: <ProtectedRoute allowedRoles={["ADMIN"]}><Admin /></ProtectedRoute> },
+          { path: "staff", element: <ProtectedRoute allowedRoles={["ADMIN", "STAFF", "USER"]}><StaffDashboard /></ProtectedRoute> },
+          { path: "about", element: <ProtectedRoute><About /></ProtectedRoute> },
+          { path: "account", element: <ProtectedRoute><Account /></ProtectedRoute> },
         ],
       },
     ],

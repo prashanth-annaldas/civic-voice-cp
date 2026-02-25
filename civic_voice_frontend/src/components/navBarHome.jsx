@@ -40,28 +40,34 @@ function NavBarHome() {
           <div className="collapse navbar-collapse justify-content-center" id="navBarContent">
             <ul className="navbar-nav mb-2 mb-md-0 d-flex align-items-center">
               {[
-                { name: "Home", path: "/home" },
-                { name: "Problems", path: "/problems" },
-                { name: "Requests", path: "/requests" },
-                { name: "Admin", path: "/admin" },
-                { name: "About", path: "/about" },
-              ].map((item) => (
-                <li className="nav-item mx-2" key={item.path}>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) =>
-                      "nav-link fw-medium px-3 rounded-pill transition-all" +
-                      (isActive ? " active text-white" : " text-muted")
-                    }
-                    style={({ isActive }) => isActive ? {
-                      background: 'var(--primary-gradient)',
-                      boxShadow: 'var(--shadow-md)'
-                    } : {}}
-                  >
-                    {item.name}
-                  </NavLink>
-                </li>
-              ))}
+                { name: "Home", path: "/home", roles: ["USER", "STAFF", "ADMIN"] },
+                { name: "Problems", path: "/problems", roles: ["USER", "STAFF", "ADMIN"] },
+                { name: "Requests", path: "/requests", roles: ["USER", "STAFF", "ADMIN"] },
+                { name: "Admin", path: "/admin", roles: ["ADMIN"] },
+                { name: "Staff", path: "/staff", roles: ["USER", "STAFF", "ADMIN"] },
+                { name: "About", path: "/about", roles: ["USER", "STAFF", "ADMIN"] },
+              ].map((item) => {
+                const userRole = localStorage.getItem("role") || "USER";
+                if (!item.roles.includes(userRole)) return null;
+
+                return (
+                  <li className="nav-item mx-2" key={item.path}>
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        "nav-link fw-medium px-3 rounded-pill transition-all" +
+                        (isActive ? " active text-white" : " text-muted")
+                      }
+                      style={({ isActive }) => isActive ? {
+                        background: 'var(--primary-gradient)',
+                        boxShadow: 'var(--shadow-md)'
+                      } : {}}
+                    >
+                      {item.name}
+                    </NavLink>
+                  </li>
+                );
+              })}
             </ul>
 
             <div className="d-flex ms-auto me-3 align-items-center mt-3 mt-md-0">

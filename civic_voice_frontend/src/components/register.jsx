@@ -9,6 +9,7 @@ function Register() {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
+  const [role, setRole] = useState("USER");
   const [err, setErr] = useState("");
   const navigate = useNavigate();
 
@@ -33,6 +34,7 @@ function Register() {
         body: JSON.stringify({
           email: email,
           password: pass,
+          role: role,
         }),
       });
 
@@ -43,8 +45,8 @@ function Register() {
         return;
       }
 
-      alert("Registration successful");
-      navigate("/home");
+      alert("Registration successful. Please login.");
+      navigate("/login");
     } catch (error) {
       setErr("Server Error");
     }
@@ -86,6 +88,19 @@ function Register() {
               onChange={(e) => setConfirmPass(e.target.value)}
             />
             <label>Confirm Password</label>
+          </div>
+
+          <div className="form-floating mb-3">
+            <select
+              className="form-select"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="USER">User</option>
+              <option value="STAFF">Staff</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+            <label>Select Role</label>
           </div>
 
           <button className="btn btn-primary w-100 py-2" type="submit">

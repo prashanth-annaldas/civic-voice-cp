@@ -44,7 +44,17 @@ function Login() {
       }
 
       localStorage.setItem("token", data.access_token);
-      navigate("/home", { replace: true });
+
+      const role = data.user?.role || "USER";
+      localStorage.setItem("role", role);
+
+      if (role === "ADMIN") {
+        navigate("/admin", { replace: true });
+      } else if (role === "STAFF") {
+        navigate("/staff", { replace: true });
+      } else {
+        navigate("/home", { replace: true });
+      }
     } catch (error) {
       setErr("Server Error");
     }
@@ -73,7 +83,17 @@ function Login() {
       }
 
       localStorage.setItem("token", data.access_token);
-      navigate("/home", { replace: true });
+
+      const role = data.user?.role || "USER";
+      localStorage.setItem("role", role);
+
+      if (role === "ADMIN") {
+        navigate("/admin", { replace: true });
+      } else if (role === "STAFF") {
+        navigate("/staff", { replace: true });
+      } else {
+        navigate("/home", { replace: true });
+      }
     } catch (error) {
       setErr("Server Error during Google Login");
     }
@@ -128,6 +148,15 @@ function Login() {
           </div>
 
           {err && <div className="text-white text-center mt-2">{err}</div>}
+
+          <div className="mt-4 p-3 rounded" style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}>
+            <h6 className="text-warning mb-2 text-center">🛠 Demo Accounts Checklist</h6>
+            <ul className="list-unstyled mb-0 ms-2 text-light small text-center" style={{ opacity: 0.9 }}>
+              <li className="mb-1">✅ <strong>Admin:</strong> ram@gmail.com / ******</li>
+              <li className="mb-1">✅ <strong>Staff:</strong> ravi@gmail.com / ******</li>
+              <li>✅ <strong>User:</strong> kiran@gmail.com / ******</li>
+            </ul>
+          </div>
         </form>
       </main>
     </div>
