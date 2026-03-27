@@ -40,7 +40,17 @@ function Requests() {
         }),
       });
 
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        let errStr = "Unknown error";
+        try {
+          const errData = await res.json();
+          errStr = errData.detail || errData.error || res.statusText;
+        } catch (e) {
+          errStr = res.statusText;
+        }
+        alert("Python Backend Error: " + JSON.stringify(errStr));
+        throw new Error("Backend Error");
+      }
 
       const userEmail = localStorage.getItem("email") || "User";
 
