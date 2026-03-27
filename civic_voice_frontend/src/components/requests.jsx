@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Location from "./geoLocation";
+import emailjs from "@emailjs/browser";
 import "./requests.css";
 
 function Requests() {
@@ -40,6 +41,25 @@ function Requests() {
       });
 
       if (!res.ok) throw new Error();
+
+      const userEmail = localStorage.getItem("email") || "User";
+
+      try {
+        await emailjs.send(
+          "service_vfaiw1k",
+          "template_i1oasoa",
+          {
+            to_email: "prashanthannaldas@gmail.com",
+            user_email: userEmail,
+            message: text,
+            latitude: lat,
+            longitude: lng,
+          },
+          "GkY_gPSCuhaAoGfEg"
+        );
+      } catch (err) {
+        console.error("EmailJS Error:", err);
+      }
 
       setResult("Request submitted and email sent!");
       setText("");

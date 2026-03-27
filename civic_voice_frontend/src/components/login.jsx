@@ -47,6 +47,9 @@ function Login() {
 
       const role = data.user?.role || "USER";
       localStorage.setItem("role", role);
+      if (data.user?.email) {
+        localStorage.setItem("email", data.user.email);
+      }
 
       if (role === "ADMIN") {
         navigate("/admin", { replace: true });
@@ -86,6 +89,9 @@ function Login() {
 
       const role = data.user?.role || "USER";
       localStorage.setItem("role", role);
+      if (data.user?.email) {
+        localStorage.setItem("email", data.user.email);
+      }
 
       if (role === "ADMIN") {
         navigate("/admin", { replace: true });
