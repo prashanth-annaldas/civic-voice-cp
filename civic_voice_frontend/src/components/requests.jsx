@@ -46,7 +46,7 @@ function Requests() {
 
       try {
         await emailjs.send(
-          "service_vfaiw1k",
+          "service_x4znowc",
           "template_i1oasoa",
           {
             name: userEmail.split("@")[0], // use the part before @ as name
