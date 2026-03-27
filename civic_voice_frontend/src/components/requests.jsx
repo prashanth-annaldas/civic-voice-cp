@@ -49,11 +49,10 @@ function Requests() {
           "service_vfaiw1k",
           "template_i1oasoa",
           {
-            to_email: "prashanthannaldas@gmail.com",
-            user_email: userEmail,
-            message: text,
-            latitude: lat,
-            longitude: lng,
+            name: userEmail.split("@")[0], // use the part before @ as name
+            email: userEmail,
+            time: new Date().toLocaleString(),
+            message: `Location: Lat ${lat}, Lng ${lng}\n\nDetails: ${text}`,
           },
           "GkY_gPSCuhaAoGfEg"
         );
