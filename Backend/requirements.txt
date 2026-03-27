@@ -10,5 +10,6 @@ python-dotenv
 requests
 pillow
 google-generativeai
-psycopg2-binary
+pymysql
+cryptography
 google-auth

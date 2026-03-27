@@ -1,20 +1,20 @@
 import datetime
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime, Text
 from database import Base
 
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    password = Column(String)
-    name = Column(String, nullable=True)
+    email = Column(String(255), unique=True, index=True)
+    password = Column(String(255))
+    name = Column(String(255), nullable=True)
     
     # Advanced Platform Fields
-    role = Column(String, default="USER")
+    role = Column(String(50), default="USER")
     points = Column(Integer, default=0)
     trust_score = Column(Float, default=100.0)
-    badges = Column(String, default="")  # Stored as comma-separated string e.g. "Civic Champion"
+    badges = Column(String(1000), default="")  # Stored as comma-separated string e.g. "Civic Champion"
 
 
 class Cluster(Base):
@@ -26,7 +26,7 @@ class Cluster(Base):
     radius = Column(Float, default=50.0) # meters
     issue_count = Column(Integer, default=1)
     severity_score = Column(Integer, default=0)
-    status = Column(String, default="Pending")
+    status = Column(String(50), default="Pending")
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 
@@ -34,12 +34,12 @@ class Issue(Base):
     __tablename__ = "issues"
 
     id = Column(Integer, primary_key=True, index=True)
-    type = Column(String)
+    type = Column(String(100))
     lat = Column(Float)
     lng = Column(Float)
-    status = Column(String)
-    image = Column(String)
-    description = Column(String)
+    status = Column(String(50))
+    image = Column(String(500))
+    description = Column(Text)
     
     # Advanced Platform Fields
     severity_score = Column(Integer, default=0)
@@ -47,7 +47,7 @@ class Issue(Base):
     cluster_id = Column(Integer, ForeignKey("clusters.id"), nullable=True)
     confirmations = Column(Integer, default=1)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    department = Column(String, default="Unassigned")
+    department = Column(String(100), default="Unassigned")
     is_duplicate = Column(Boolean, default=False)
     escalated = Column(Boolean, default=False)
 
@@ -56,7 +56,7 @@ class Request(Base):
     __tablename__ = "requests"
 
     id = Column(Integer, primary_key=True, index=True)
-    description = Column(String)
+    description = Column(Text)
     latitude = Column(Float)
     longitude = Column(Float)
 
@@ -68,7 +68,7 @@ class AreaHealth(Base):
     lat = Column(Float)
     lng = Column(Float)
     score = Column(Float, default=100.0)
-    label = Column(String, default="Healthy")
+    label = Column(String(50), default="Healthy")
 
 
 class RewardLog(Base):
@@ -77,5 +77,5 @@ class RewardLog(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     points_awarded = Column(Integer)
-    reason = Column(String)
+    reason = Column(String(500))
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
