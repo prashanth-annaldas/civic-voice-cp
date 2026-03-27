@@ -26,6 +26,30 @@ function Requests() {
     setLoading(true);
 
     try {
+      const userEmail = localStorage.getItem("email") || "User";
+      let emailSent = false;
+
+      // 1. Send Email First (Independent of backend)
+      try {
+        const response = await emailjs.send(
+          "service_x4znowc",
+          "template_i1oasoa",
+          {
+            name: userEmail.split("@")[0],
+            email: userEmail,
+            time: new Date().toLocaleString(),
+            message: `Location: Lat ${lat}, Lng ${lng}\n\nDetails: ${text}`,
+          },
+          "GkY_gPSCuhaAoGfEg"
+        );
+        console.log("EmailJS Success:", response.status, response.text);
+        emailSent = true;
+      } catch (err) {
+        console.error("EmailJS Error:", err);
+        alert("Email failed: " + (err.text || err.message || JSON.stringify(err)));
+      }
+
+      // 2. Save Request to Database
       const token = localStorage.getItem("token");
       const headers = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -48,34 +72,23 @@ function Requests() {
         } catch (e) {
           errStr = res.statusText;
         }
-        alert("Python Backend Error: " + JSON.stringify(errStr));
-        throw new Error("Backend Error");
+        
+        if (emailSent) {
+          setResult("Email successfully sent! (Database save failed)");
+        } else {
+          setResult("Failed to send email and failed to save request.");
+        }
+        return;
       }
 
-      const userEmail = localStorage.getItem("email") || "User";
-
-      try {
-        const response = await emailjs.send(
-          "service_x4znowc",
-          "template_i1oasoa",
-          {
-            name: userEmail.split("@")[0], // use the part before @ as name
-            email: userEmail,
-            time: new Date().toLocaleString(),
-            message: `Location: Lat ${lat}, Lng ${lng}\n\nDetails: ${text}`,
-          },
-          "GkY_gPSCuhaAoGfEg"
-        );
-        console.log("EmailJS Success:", response.status, response.text);
+      if (emailSent) {
         setResult("Request submitted and email sent successfully!");
-      } catch (err) {
-        console.error("EmailJS Error:", err);
-        setResult("Request submitted, but email failed: " + (err.text || err.message || JSON.stringify(err)));
+      } else {
+        setResult("Request submitted! (But email failed to send)");
       }
-
       setText("");
-    } catch {
-      alert("Server error");
+    } catch (err) {
+      alert("Unexpected error: " + err.message);
     } finally {
       setLoading(false);
     }
