@@ -11,5 +11,6 @@ requests
 pillow
 google-generativeai
 pymysql
+psycopg2-binary
 cryptography
 google-auth
