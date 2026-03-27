@@ -45,7 +45,7 @@ function Requests() {
       const userEmail = localStorage.getItem("email") || "User";
 
       try {
-        await emailjs.send(
+        const response = await emailjs.send(
           "service_x4znowc",
           "template_i1oasoa",
           {
@@ -56,11 +56,13 @@ function Requests() {
           },
           "GkY_gPSCuhaAoGfEg"
         );
+        console.log("EmailJS Success:", response.status, response.text);
+        setResult("Request submitted and email sent successfully!");
       } catch (err) {
         console.error("EmailJS Error:", err);
+        setResult("Request submitted, but email failed: " + (err.text || err.message || JSON.stringify(err)));
       }
 
-      setResult("Request submitted and email sent!");
       setText("");
     } catch {
       alert("Server error");
