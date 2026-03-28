@@ -25,9 +25,10 @@ export const sendCivicRequestEmail = async ({ userEmail, description, lat, lng, 
     name: userEmail.split("@")[0] || "User",
     email: userEmail,
     time: new Date().toLocaleString(),
-
-    message: `Location: Lat ${lat}, Lng ${lng}\n\nDetails: ${description}`,
-    image_base64: imageBase64 || "", // pass base64 image to template
+    lat: lat,
+    lng: lng,
+    message: description || "No description provided",
+    image_base64: imageBase64 || "",
   };
 
   try {
