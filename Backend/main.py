@@ -61,7 +61,7 @@ def get_nearby_pois(lat: float, lng: float, radius: int = 500) -> list:
     out center;
     """
     try:
-        response = requests.post(overpass_url, data={'data': overpass_query}, timeout=5)
+        response = req.post(overpass_url, data={'data': overpass_query}, timeout=5)
         if response.status_code == 200:
             data = response.json()
             pois = []
