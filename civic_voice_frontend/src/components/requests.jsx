@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Location from "./geoLocation";
-import emailjs from "@emailjs/browser";
+import { sendCivicRequestEmail } from "../utils/emailService";
 import "./requests.css";
 
 function Requests() {
@@ -30,24 +30,12 @@ function Requests() {
       let emailSent = false;
 
       // 1. Send Email First (Independent of backend)
-      try {
-        const response = await emailjs.send(
-          "service_x4znowc",
-          "template_i1oasoa",
-          {
-            name: userEmail.split("@")[0],
-            email: userEmail,
-            time: new Date().toLocaleString(),
-            message: `Location: Lat ${lat}, Lng ${lng}\n\nDetails: ${text}`,
-          },
-          "GkY_gPSCuhaAoGfEg"
-        );
-        console.log("EmailJS Success:", response.status, response.text);
-        emailSent = true;
-      } catch (err) {
-        console.error("EmailJS Error:", err);
-        alert("Email failed: " + (err.text || err.message || JSON.stringify(err)));
-      }
+      emailSent = await sendCivicRequestEmail({
+        userEmail,
+        description: text,
+        lat,
+        lng,
+      });
 
       // 2. Save Request to Database
       const token = localStorage.getItem("token");
@@ -100,7 +88,7 @@ function Requests() {
         <div className="card shadow-xl border-0 rounded-4 overflow-hidden" style={{ maxWidth: '650px', width: '100%', background: 'var(--surface-color)' }}>
           {/* HEADER */}
           <div className="bg-info text-white p-4" style={{ background: 'var(--secondary-gradient)' }}>
-            <h2 className="mb-0 fw-bold"><i className="bi bi- megaphone-fill me-2"></i>Submit a Request</h2>
+            <h2 className="mb-0 fw-bold"><i className="bi bi-megaphone-fill me-2"></i>Submit a Request</h2>
             <p className="mb-0 opacity-75 mt-1">Lodge a formal demand or request directly to city officials.</p>
           </div>
 

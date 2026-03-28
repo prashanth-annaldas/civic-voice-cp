@@ -349,16 +349,20 @@ from sqlalchemy import text
 
 @app.on_event("startup")
 def on_startup():
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
     try:
-        db.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'USER';"))
-        db.commit()
+        Base.metadata.create_all(bind=engine)
+        db = SessionLocal()
+        try:
+            db.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'USER';"))
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            pass
+        finally:
+            db.close()
     except Exception as e:
-        db.rollback()
-        pass
-    finally:
-        db.close()
+        print(f"⚠️ Database connection failed during startup: {e}")
+        print("⚠️ Server is running, but database-dependent endpoints will fail.")
 
 
 # ---------------- CORS ----------------

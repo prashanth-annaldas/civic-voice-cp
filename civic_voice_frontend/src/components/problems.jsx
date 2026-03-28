@@ -1,7 +1,40 @@
 import { useState } from "react";
 import Location from "./geoLocation";
+import { sendCivicRequestEmail } from "../utils/emailService";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./problems.css";
+
+const compressImageToBase64 = (file, maxWidth, maxHeight, quality) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+    };
+  });
+};
 
 function Problems() {
   const [preview, setPreview] = useState(null);
@@ -82,6 +115,24 @@ function Problems() {
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
     try {
+      const userEmail = localStorage.getItem("email") || "User";
+      let emailSent = false;
+      
+      let compressedBase64 = null;
+      if (file) {
+        // Compress image so it passes EmailJS 50kb limit
+        compressedBase64 = await compressImageToBase64(file, 200, 200, 0.4);
+      }
+
+      // 1. Send Email First (Independent of backend)
+      emailSent = await sendCivicRequestEmail({
+        userEmail,
+        description: text || "Image submitted",
+        lat,
+        lng,
+        imageBase64: compressedBase64,
+      });
+
       const res = await fetch(`${API_BASE}/upload`, {
         method: "POST",
         headers: headers,
@@ -91,9 +142,17 @@ function Problems() {
       const data = await res.json();
 
       if (res.ok) {
-        setResult(data.issue.type);
+        if (emailSent) {
+          setResult(data.issue.type + " - Email sent successfully!");
+        } else {
+          setResult(data.issue.type + " - (Email failed to send)");
+        }
       } else {
-        setResult(data.error || "Upload failed");
+        if (emailSent) {
+          setResult((data.error || "Upload failed") + " - Email sent successfully!");
+        } else {
+          setResult(data.error || "Upload failed");
+        }
       }
     } catch (err) {
       setResult("Server error");
